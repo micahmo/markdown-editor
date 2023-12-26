@@ -7,7 +7,7 @@ class FormatMarkdown {
   /// Use [fromIndex] and [toIndex] for converting part of [data]
   /// [titleSize] is used for markdown titles
   /// [link] is used for link conversion type
-  static ResultMarkdown convertToMarkdown(MarkdownType type, String data, int fromIndex, int toIndex, {int titleSize = 1, String? link, String selectedText = ''}) {
+  static ResultMarkdown convertToMarkdown(MarkdownType type, String data, int fromIndex, int toIndex, {int titleSize = 1, String? link, String selectedText = '', String customSelectedText = ''}) {
     late String changedData;
     late int replaceCursorIndex;
 
@@ -53,7 +53,7 @@ class FormatMarkdown {
         break;
       case MarkdownType.blockquote:
         var index = 0;
-        final splitedData = data.substring(fromIndex, toIndex).split('\n');
+        final splitedData = (customSelectedText.isNotEmpty ? customSelectedText : data.substring(fromIndex, toIndex)).split('\n');
         changedData = splitedData.map((value) {
           index++;
           return index == splitedData.length ? '> $value' : '> $value\n';

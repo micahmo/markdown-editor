@@ -34,6 +34,9 @@ class MarkdownButtons extends StatelessWidget {
   /// Allows overriding tap actions
   final Map<MarkdownType, void Function()>? customTapActions;
 
+  /// Allows providing a custom text selection to be used when performing markdown formatting
+  final String? Function(MarkdownType)? getCustomSelectedText;
+
   /// Constructor for [MarkdownButtons]
   const MarkdownButtons({
     required this.controller,
@@ -43,6 +46,7 @@ class MarkdownButtons extends StatelessWidget {
     this.customImageButtonAction,
     this.imageIsLoading = false,
     this.customTapActions,
+    this.getCustomSelectedText,
   });
 
   @override
@@ -228,7 +232,7 @@ class MarkdownButtons extends StatelessWidget {
           ? customTapActions![type]!()
           : customOnTap != null
               ? customOnTap()
-              : _onTap(type),
+              : _onTap(type, customSelectedText: getCustomSelectedText?.call(type)),
       child: Padding(
         padding: const EdgeInsets.all(10),
         child: Icon(type.icon, semanticLabel: label),
@@ -236,14 +240,14 @@ class MarkdownButtons extends StatelessWidget {
     );
   }
 
-  void _onTap(MarkdownType type, {int titleSize = 1, String? link, String? selectedText}) {
+  void _onTap(MarkdownType type, {int titleSize = 1, String? link, String? selectedText, String? customSelectedText}) {
     var noTextSelected = (controller.selection.start - controller.selection.end) == 0;
 
     var fromIndex = controller.selection.start;
     var toIndex = controller.selection.end;
 
-    final result =
-        FormatMarkdown.convertToMarkdown(type, controller.text, fromIndex, toIndex, titleSize: titleSize, link: link, selectedText: selectedText ?? controller.text.substring(fromIndex, toIndex));
+    final result = FormatMarkdown.convertToMarkdown(type, controller.text, fromIndex, toIndex,
+        titleSize: titleSize, link: link, selectedText: selectedText ?? controller.text.substring(fromIndex, toIndex), customSelectedText: customSelectedText ?? '');
 
     controller.value = controller.value.copyWith(text: result.data, selection: TextSelection.collapsed(offset: fromIndex + result.cursorIndex));
 
