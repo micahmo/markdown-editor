@@ -238,7 +238,7 @@ enum MarkdownType {
       case MarkdownType.community:
         return const IconData(0x0021);
       case MarkdownType.spoiler:
-        return Icons.lock_rounded;
+        return Icons.comments_disabled_rounded;
     }
   }
 }
